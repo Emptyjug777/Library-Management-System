@@ -17,6 +17,7 @@ public:
     void close();
 
     bool execute(const std::string& sql);
+    bool createTables();
 };
 
 #endif

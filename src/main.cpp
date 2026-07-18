@@ -7,7 +7,10 @@ int main()
 
     if (database.connect("database/library.db"))
     {
-        std::cout << "Application Started Successfully!" << std::endl;
+        if (database.createTables())
+        {
+            std::cout << "Database initialized successfully!\n";
+        }
     }
 
     return 0;

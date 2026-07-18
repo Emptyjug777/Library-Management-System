@@ -45,3 +45,36 @@ bool Database::execute(const std::string& sql)
 
     return true;
 }
+bool Database::createTables()
+{
+    std::string booksTable =
+        "CREATE TABLE IF NOT EXISTS books ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "title TEXT NOT NULL,"
+        "author TEXT NOT NULL,"
+        "isbn TEXT UNIQUE,"
+        "available INTEGER DEFAULT 1"
+        ");";
+
+    std::string studentsTable =
+        "CREATE TABLE IF NOT EXISTS students ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "name TEXT NOT NULL,"
+        "rollNumber TEXT UNIQUE"
+        ");";
+
+    std::string transactionsTable =
+        "CREATE TABLE IF NOT EXISTS transactions ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "bookId INTEGER,"
+        "studentId INTEGER,"
+        "issueDate TEXT,"
+        "returnDate TEXT,"
+        "FOREIGN KEY(bookId) REFERENCES books(id),"
+        "FOREIGN KEY(studentId) REFERENCES students(id)"
+        ");";
+
+    return execute(booksTable) &&
+           execute(studentsTable) &&
+           execute(transactionsTable);
+}
