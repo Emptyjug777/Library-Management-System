@@ -1,11 +1,11 @@
-//gcc -c external/sqlite/sqlite3.c -o sqlite3.o
-//g++ src/main.cpp src/database/Database.cpp src/models/Book.cpp src/services/BookService.cpp sqlite3.o -Iinclude -Iexternal/sqlite -o LMS.exe
-#include <iostream>
-#include <vector>
-
+// gcc -c external/sqlite/sqlite3.c -o sqlite3.o
+// g++ src/main.cpp src/database/Database.cpp src/models/Book.cpp src/models/Student.cpp src/services/BookService.cpp src/services/StudentService.cpp sqlite3.o -Iinclude -Iexternal/sqlite -o LMS.exe
 #include "database/Database.h"
 #include "services/BookService.h"
 #include "models/Book.h"
+#include "services/StudentService.h"
+#include "models/Student.h"
+#include <iostream>
 
 int main()
 {
@@ -18,12 +18,13 @@ int main()
 
     database.createTables();
 
-    BookService bookService(database);
-Book book = bookService.getBookByISBN("9780132350884");
+StudentService studentService(database);
 
-if (bookService.deleteBook(book.getId()))
+Student student = studentService.getStudentByRollNumber("22CS1001");
+
+if (studentService.deleteStudent(student.getId()))
 {
-    std::cout << "Book Deleted Successfully!\n";
+    std::cout << "Student Deleted Successfully!\n";
 }
 else
 {

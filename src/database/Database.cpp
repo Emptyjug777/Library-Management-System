@@ -56,12 +56,13 @@ bool Database::createTables()
         "available INTEGER DEFAULT 1"
         ");";
 
-    std::string studentsTable =
-        "CREATE TABLE IF NOT EXISTS students ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "name TEXT NOT NULL,"
-        "rollNumber TEXT UNIQUE"
-        ");";
+std::string studentsTable =
+    "CREATE TABLE IF NOT EXISTS students ("
+    "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+    "name TEXT NOT NULL,"
+    "roll_number TEXT UNIQUE,"
+    "department TEXT NOT NULL"
+    ");";
 
     std::string transactionsTable =
         "CREATE TABLE IF NOT EXISTS transactions ("
