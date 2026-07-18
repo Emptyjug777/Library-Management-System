@@ -78,3 +78,7 @@ bool Database::createTables()
            execute(studentsTable) &&
            execute(transactionsTable);
 }
+sqlite3* Database::getDatabase()
+{
+    return db;
+}

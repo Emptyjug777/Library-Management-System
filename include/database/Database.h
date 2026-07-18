@@ -18,6 +18,7 @@ public:
 
     bool execute(const std::string& sql);
     bool createTables();
+    sqlite3* getDatabase();
 };
 
 #endif
