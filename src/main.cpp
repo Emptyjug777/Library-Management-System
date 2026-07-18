@@ -1,10 +1,11 @@
 // gcc -c external/sqlite/sqlite3.c -o sqlite3.o
-// g++ src/main.cpp src/database/Database.cpp src/models/Book.cpp src/models/Student.cpp src/services/BookService.cpp src/services/StudentService.cpp sqlite3.o -Iinclude -Iexternal/sqlite -o LMS.exe
-#include "database/Database.h"
+//g++ src/main.cpp src/database/Database.cpp src/models/Book.cpp src/models/Student.cpp src/models/Transaction.cpp src/services/BookService.cpp src/services/StudentService.cpp src/services/TransactionService.cpp sqlite3.o -Iinclude -Iexternal/sqlite -o LMS.exe
+ #include "database/Database.h"
 #include "services/BookService.h"
 #include "models/Book.h"
 #include "services/StudentService.h"
 #include "models/Student.h"
+#include "services/TransactionService.h"
 #include <iostream>
 
 int main()
@@ -17,17 +18,17 @@ int main()
     }
 
     database.createTables();
+    TransactionService transactionService(database);
 
-StudentService studentService(database);
+std::vector<Transaction> transactions = transactionService.getAllTransactions();
 
-Student student = studentService.getStudentByRollNumber("22CS1001");
-
-if (studentService.deleteStudent(student.getId()))
+for (const auto& transaction : transactions)
 {
-    std::cout << "Student Deleted Successfully!\n";
+    std::cout << "Transaction ID: " << transaction.getId() << "\n";
+    std::cout << "Book ID: " << transaction.getBookId() << "\n";
+    std::cout << "Student ID: " << transaction.getStudentId() << "\n";
+    std::cout << "Issue Date: " << transaction.getIssueDate() << "\n";
+    std::cout << "Return Date: " << transaction.getReturnDate() << "\n\n";
 }
-else
-{
-    std::cout << "Delete Failed!\n";
-}
+
 }
