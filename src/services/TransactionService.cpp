@@ -10,6 +10,45 @@ bool TransactionService::issueBook(const Transaction& transaction)
 {
     sqlite3_stmt* stmt;
 
+    // Check if Book ID exists
+    std::string bookSql = "SELECT COUNT(*) FROM books WHERE id = ?;";
+
+    if (sqlite3_prepare_v2(database.getDatabase(), bookSql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
+
+    sqlite3_bind_int(stmt, 1, transaction.getBookId());
+
+    if (sqlite3_step(stmt) != SQLITE_ROW || sqlite3_column_int(stmt, 0) == 0)
+    {
+        sqlite3_finalize(stmt);
+        std::cout << "Book not found.\n";
+        return false;
+    }
+
+    sqlite3_finalize(stmt);
+
+    // Check if Student ID exists
+    std::string studentSql = "SELECT COUNT(*) FROM students WHERE id = ?;";
+
+    if (sqlite3_prepare_v2(database.getDatabase(), studentSql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
+
+    sqlite3_bind_int(stmt, 1, transaction.getStudentId());
+
+    if (sqlite3_step(stmt) != SQLITE_ROW || sqlite3_column_int(stmt, 0) == 0)
+    {
+        sqlite3_finalize(stmt);
+        std::cout << "Student not found.\n";
+        return false;
+    }
+
+    sqlite3_finalize(stmt);
+
+    // Check if the book is available
     std::string checkSql =
         "SELECT available FROM books WHERE id = ?;";
 
@@ -35,6 +74,7 @@ bool TransactionService::issueBook(const Transaction& transaction)
         return false;
     }
 
+    // Insert transaction
     std::string insertSql =
         "INSERT INTO transactions (bookId, studentId, issueDate, returnDate) VALUES (" +
         std::to_string(transaction.getBookId()) + ", " +
@@ -42,6 +82,7 @@ bool TransactionService::issueBook(const Transaction& transaction)
         transaction.getIssueDate() + "', '" +
         transaction.getReturnDate() + "');";
 
+    // Update availability
     std::string updateSql =
         "UPDATE books SET available = 0 WHERE id = " +
         std::to_string(transaction.getBookId()) + ";";
