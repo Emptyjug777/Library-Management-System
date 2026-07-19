@@ -1,20 +1,22 @@
-# Build output
-build/
-bin/
-out/
-
 # Executables
 *.exe
 *.out
 
-# Object files
+# Object Files
 *.o
 *.obj
 
-# Visual Studio Code
+# SQLite Database
+database/library.db
+
+# VS Code
 .vscode/
 
-# SQLite database (generated locally)
-*.db
-*.sqlite
-*.sqlite3
+# Build Folders
+build/
+
+# Windows
+Thumbs.db
+
+# macOS
+.DS_Store

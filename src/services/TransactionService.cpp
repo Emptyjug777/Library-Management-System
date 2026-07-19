@@ -92,14 +92,46 @@ bool TransactionService::issueBook(const Transaction& transaction)
 }
 bool TransactionService::returnBook(int transactionId)
 {
+    sqlite3_stmt* stmt;
+
+    std::string checkSql =
+        "SELECT bookId, returnDate FROM transactions WHERE id = ?;";
+
+    if (sqlite3_prepare_v2(database.getDatabase(), checkSql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return false;
+    }
+
+    sqlite3_bind_int(stmt, 1, transactionId);
+
+    if (sqlite3_step(stmt) != SQLITE_ROW)
+    {
+        sqlite3_finalize(stmt);
+        std::cout << "Transaction not found.\n";
+        return false;
+    }
+
+    int bookId = sqlite3_column_int(stmt, 0);
+
+    const unsigned char* returnDateText = sqlite3_column_text(stmt, 1);
+
+    if (returnDateText != nullptr &&
+        std::string(reinterpret_cast<const char*>(returnDateText)) != "")
+    {
+        sqlite3_finalize(stmt);
+        std::cout << "Book has already been returned.\n";
+        return false;
+    }
+
+    sqlite3_finalize(stmt);
+
     std::string updateTransaction =
         "UPDATE transactions SET returnDate = '2026-07-18' WHERE id = " +
         std::to_string(transactionId) + ";";
 
     std::string updateBook =
-        "UPDATE books SET available = 1 WHERE id = ("
-        "SELECT bookId FROM transactions WHERE id = " +
-        std::to_string(transactionId) + ");";
+        "UPDATE books SET available = 1 WHERE id = " +
+        std::to_string(bookId) + ";";
 
     return database.execute(updateTransaction) &&
            database.execute(updateBook);

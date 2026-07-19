@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <iomanip>
 
 #include "database/Database.h"
 #include "models/Book.h"
@@ -30,7 +31,9 @@ int main()
 
     while (true)
     {
-        cout << "\n========== Library Management System ==========\n";
+        cout << "\n=====================================================\n";
+        cout << "           LIBRARY MANAGEMENT SYSTEM\n";
+        cout << "=====================================================\n";
         cout << "1. Add Book\n";
         cout << "2. View Books\n";
         cout << "3. Update Book\n";
@@ -43,7 +46,7 @@ int main()
         cout << "10. Return Book\n";
         cout << "11. View Transactions\n";
         cout << "12. Search book by ISBN\n";
-        cout << "13. Search book by Roll Number\n";
+        cout << "13. Search student by Roll Number\n";
         cout << "14. Search book by Title\n";
 
         cout << "0. Exit\n";
@@ -97,17 +100,25 @@ int main()
             }
             else
             {
-                cout << "\n========== BOOK LIST ==========\n";
+                cout << "\n==============================================================\n";
+                cout << left
+                     << setw(5) << "ID"
+                     << setw(25) << "Title"
+                     << setw(20) << "Author"
+                     << setw(12) << "ISBN"
+                     << setw(10) << "Status" << endl;
+
+                cout << "==============================================================\n";
 
                 for (const auto &book : books)
                 {
-                    cout << "ID        : " << book.getId() << '\n';
-                    cout << "Title     : " << book.getTitle() << '\n';
-                    cout << "Author    : " << book.getAuthor() << '\n';
-                    cout << "ISBN      : " << book.getISBN() << '\n';
-                    cout << "Available : "
-                         << (book.isAvailable() ? "Yes" : "No") << "\n";
-                    cout << "---------------------------------\n";
+                    cout << left
+                         << setw(5) << book.getId()
+                         << setw(25) << book.getTitle()
+                         << setw(20) << book.getAuthor()
+                         << setw(12) << book.getISBN()
+                         << setw(10) << (book.isAvailable() ? "Available" : "Issued")
+                         << endl;
                 }
             }
 
@@ -115,332 +126,353 @@ int main()
         }
 
         case 3:
-{
-    int id;
+        {
+            int id;
 
-    cout << "\nEnter Book ID: ";
-    cin >> id;
+            cout << "\nEnter Book ID: ";
+            cin >> id;
 
-    if (!(cin))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid ID!\n";
-        break;
-    }
+            if (!(cin))
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid ID!\n";
+                break;
+            }
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    string title, author, isbn;
+            string title, author, isbn;
 
-    cout << "Enter New Title: ";
-    getline(cin, title);
+            cout << "Enter New Title: ";
+            getline(cin, title);
 
-    cout << "Enter New Author: ";
-    getline(cin, author);
+            cout << "Enter New Author: ";
+            getline(cin, author);
 
-    cout << "Enter New ISBN: ";
-    getline(cin, isbn);
+            cout << "Enter New ISBN: ";
+            getline(cin, isbn);
 
-    Book updatedBook(id, title, author, isbn, true);
+            Book updatedBook(id, title, author, isbn, true);
 
-    if (bookService.updateBook(updatedBook))
-        cout << "\nBook updated successfully!\n";
-    else
-        cout << "\nFailed to update book!\n";
+            if (bookService.updateBook(updatedBook))
+                cout << "\nBook updated successfully!\n";
+            else
+                cout << "\nFailed to update book!\n";
 
-    break;
-}
+            break;
+        }
 
         case 4:
-{
-    int id;
-
-    cout << "\nEnter Book ID to delete: ";
-    cin >> id;
-
-    if (!(cin))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid ID!\n";
-        break;
-    }
-
-    if (bookService.deleteBook(id))
-        cout << "\nBook deleted successfully!\n";
-    else
-        cout << "\nBook not found or deletion failed!\n";
-
-    break;
-}
-
-case 5:
-{
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    string name, rollNumber, department;
-
-    cout << "Enter Student Name: ";
-    getline(cin, name);
-
-    cout << "Enter Roll Number: ";
-    getline(cin, rollNumber);
-
-    cout << "Enter Department: ";
-    getline(cin, department);
-
-    Student student(0, name, rollNumber, department);
-
-    if (studentService.addStudent(student))
-        cout << "\nStudent added successfully!\n";
-    else
-        cout << "\nFailed to add student!\n";
-
-    break;
-}
-case 6:
-{
-    vector<Student> students = studentService.getAllStudents();
-
-    if (students.empty())
-    {
-        cout << "\nNo students found!\n";
-    }
-    else
-    {
-        cout << "\n========== STUDENT LIST ==========\n";
-
-        for (const auto& student : students)
         {
-            cout << "ID         : " << student.getId() << endl;
-            cout << "Name       : " << student.getName() << endl;
-            cout << "Roll No.   : " << student.getRollNumber() << endl;
-            cout << "Department : " << student.getDepartment() << endl;
-            cout << "----------------------------------\n";
+            int id;
+
+            cout << "\nEnter Book ID to delete: ";
+            cin >> id;
+
+            if (!(cin))
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid ID!\n";
+                break;
+            }
+
+            if (bookService.deleteBook(id))
+                cout << "\nBook deleted successfully!\n";
+            else
+                cout << "\nBook not found or deletion failed!\n";
+
+            break;
         }
-    }
 
-    break;
-}
+        case 5:
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-case 7:
-{
-    int id;
+            string name, rollNumber, department;
 
-    cout << "Enter Student ID: ";
-    cin >> id;
+            cout << "Enter Student Name: ";
+            getline(cin, name);
 
-    if (!(cin))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid ID!\n";
-        break;
-    }
+            cout << "Enter Roll Number: ";
+            getline(cin, rollNumber);
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Enter Department: ";
+            getline(cin, department);
 
-    string name, rollNumber, department;
+            Student student(0, name, rollNumber, department);
 
-    cout << "Enter New Name: ";
-    getline(cin, name);
+            if (studentService.addStudent(student))
+                cout << "\nStudent added successfully!\n";
+            else
+                cout << "\nFailed to add student!\n";
 
-    cout << "Enter New Roll Number: ";
-    getline(cin, rollNumber);
+            break;
+        }
+        case 6:
+        {
+            vector<Student> students = studentService.getAllStudents();
 
-    cout << "Enter New Department: ";
-    getline(cin, department);
+            if (students.empty())
+            {
+                cout << "\nNo students found!\n";
+            }
+            else
+            {
+                cout << "\n=============================================================\n";
+                cout << left
+                     << setw(5) << "ID"
+                     << setw(25) << "Name"
+                     << setw(20) << "Roll Number"
+                     << setw(20) << "Department" << endl;
 
-    Student student(id, name, rollNumber, department);
+                cout << "=============================================================\n";
 
-    if (studentService.updateStudent(student))
-        cout << "\nStudent updated successfully!\n";
-    else
-        cout << "\nFailed to update student!\n";
+                for (const auto &student : students)
+                {
+                    cout << left
+                         << setw(5) << student.getId()
+                         << setw(25) << student.getName()
+                         << setw(20) << student.getRollNumber()
+                         << setw(20) << student.getDepartment()
+                         << endl;
+                }
+            }
 
-    break;
-}
+            break;
+        }
 
-case 8:
-{
-    int id;
+        case 7:
+        {
+            int id;
 
-    cout << "Enter Student ID to delete: ";
-    cin >> id;
+            cout << "Enter Student ID: ";
+            cin >> id;
 
-    if (!(cin))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid ID!\n";
-        break;
-    }
+            if (!(cin))
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid ID!\n";
+                break;
+            }
 
-    if (studentService.deleteStudent(id))
-        cout << "\nStudent deleted successfully!\n";
-    else
-        cout << "\nStudent not found or deletion failed!\n";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    break;
-}
+            string name, rollNumber, department;
 
-case 9:
-{
-    int bookId, studentId;
-    string issueDate;
+            cout << "Enter New Name: ";
+            getline(cin, name);
 
-    cout << "Enter Book ID: ";
-    cin >> bookId;
+            cout << "Enter New Roll Number: ";
+            getline(cin, rollNumber);
 
-    cout << "Enter Student ID: ";
-    cin >> studentId;
+            cout << "Enter New Department: ";
+            getline(cin, department);
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            Student student(id, name, rollNumber, department);
 
-    cout << "Enter Issue Date (YYYY-MM-DD): ";
-    getline(cin, issueDate);
+            if (studentService.updateStudent(student))
+                cout << "\nStudent updated successfully!\n";
+            else
+                cout << "\nFailed to update student!\n";
 
-    Transaction transaction(0, bookId, studentId, issueDate, "");
+            break;
+        }
 
-    if (transactionService.issueBook(transaction))
-        cout << "\nBook issued successfully!\n";
-    else
-        cout << "\nFailed to issue book!\n";
+        case 8:
+        {
+            int id;
 
-    break;
-}
+            cout << "Enter Student ID to delete: ";
+            cin >> id;
 
-case 10:
-{
-    int transactionId;
+            if (!(cin))
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid ID!\n";
+                break;
+            }
 
-    cout << "Enter Transaction ID: ";
-    cin >> transactionId;
+            if (studentService.deleteStudent(id))
+                cout << "\nStudent deleted successfully!\n";
+            else
+                cout << "\nStudent not found or deletion failed!\n";
 
-    if (!(cin))
-    {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Invalid Transaction ID!\n";
-        break;
-    }
+            break;
+        }
 
-    if (transactionService.returnBook(transactionId))
-        cout << "\nBook returned successfully!\n";
-    else
-        cout << "\nFailed to return book!\n";
+        case 9:
+        {
+            int bookId, studentId;
+            string issueDate;
 
-    break;
-}
+            cout << "Enter Book ID: ";
+            cin >> bookId;
+
+            cout << "Enter Student ID: ";
+            cin >> studentId;
+
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            cout << "Enter Issue Date (YYYY-MM-DD): ";
+            getline(cin, issueDate);
+
+            Transaction transaction(0, bookId, studentId, issueDate, "");
+
+            if (transactionService.issueBook(transaction))
+                cout << "\nBook issued successfully!\n";
+            else
+                cout << "\nFailed to issue book!\n";
+
+            break;
+        }
+
+        case 10:
+        {
+            int transactionId;
+
+            cout << "Enter Transaction ID: ";
+            cin >> transactionId;
+
+            if (!(cin))
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid Transaction ID!\n";
+                break;
+            }
+
+            if (transactionService.returnBook(transactionId))
+                cout << "\nBook returned successfully!\n";
+            else
+                cout << "\nFailed to return book!\n";
+
+            break;
+        }
 
         case 11:
-{
-    vector<Transaction> transactions = transactionService.getAllTransactions();
-
-    if (transactions.empty())
-    {
-        cout << "\nNo transactions found!\n";
-    }
-    else
-    {
-        cout << "\n========== TRANSACTION HISTORY ==========\n";
-
-        for (const auto& transaction : transactions)
         {
-            cout << "Transaction ID : " << transaction.getId() << endl;
-            cout << "Book ID        : " << transaction.getBookId() << endl;
-            cout << "Student ID     : " << transaction.getStudentId() << endl;
-            cout << "Issue Date     : " << transaction.getIssueDate() << endl;
-            cout << "Return Date    : " << transaction.getReturnDate() << endl;
-            cout << "-----------------------------------------\n";
+            vector<Transaction> transactions = transactionService.getAllTransactions();
+
+            if (transactions.empty())
+            {
+                cout << "\nNo transactions found!\n";
+            }
+            else
+            {
+                cout << "\n=================================================================================\n";
+
+                cout << left
+                     << setw(8) << "Txn ID"
+                     << setw(10) << "Book ID"
+                     << setw(12) << "Student"
+                     << setw(15) << "Issue Date"
+                     << setw(15) << "Return Date"
+                     << endl;
+
+                cout << "=================================================================================\n";
+
+                for (const auto &transaction : transactions)
+                {
+                    cout << left
+                         << setw(8) << transaction.getId()
+                         << setw(10) << transaction.getBookId()
+                         << setw(12) << transaction.getStudentId()
+                         << setw(15) << transaction.getIssueDate()
+                         << setw(15)
+                         << (transaction.getReturnDate().empty() ? "Not Returned"
+                                                                 : transaction.getReturnDate())
+                         << endl;
+                }
+            }
+
+            break;
         }
-    }
+        case 12:
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    break;
-}
-case 12:
-{
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            string isbn;
 
-    string isbn;
+            cout << "Enter ISBN: ";
+            getline(cin, isbn);
 
-    cout << "Enter ISBN: ";
-    getline(cin, isbn);
+            Book book = bookService.getBookByISBN(isbn);
 
-    Book book = bookService.getBookByISBN(isbn);
+            if (book.getId() == 0)
+            {
+                cout << "\nBook not found!\n";
+            }
+            else
+            {
+                cout << "\n========== BOOK DETAILS ==========\n";
+                cout << "ID        : " << book.getId() << endl;
+                cout << "Title     : " << book.getTitle() << endl;
+                cout << "Author    : " << book.getAuthor() << endl;
+                cout << "ISBN      : " << book.getISBN() << endl;
+                cout << "Available : "
+                     << (book.isAvailable() ? "Yes" : "No") << endl;
+            }
 
-    if (book.getId() == 0)
-    {
-        cout << "\nBook not found!\n";
-    }
-    else
-    {
-        cout << "\n========== BOOK DETAILS ==========\n";
-        cout << "ID        : " << book.getId() << endl;
-        cout << "Title     : " << book.getTitle() << endl;
-        cout << "Author    : " << book.getAuthor() << endl;
-        cout << "ISBN      : " << book.getISBN() << endl;
-        cout << "Available : "
-             << (book.isAvailable() ? "Yes" : "No") << endl;
-    }
+            break;
+        }
+        case 13:
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    break;
-}
-case 13:
-{
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            string rollNumber;
 
-    string rollNumber;
+            cout << "Enter Roll Number: ";
+            getline(cin, rollNumber);
 
-    cout << "Enter Roll Number: ";
-    getline(cin, rollNumber);
+            Student student = studentService.getStudentByRollNumber(rollNumber);
 
-    Student student = studentService.getStudentByRollNumber(rollNumber);
+            if (student.getId() == 0)
+            {
+                cout << "\nStudent not found!\n";
+            }
+            else
+            {
+                cout << "\n========== STUDENT DETAILS ==========\n";
+                cout << "ID         : " << student.getId() << endl;
+                cout << "Name       : " << student.getName() << endl;
+                cout << "Roll Number: " << student.getRollNumber() << endl;
+                cout << "Department : " << student.getDepartment() << endl;
+            }
 
-    if (student.getId() == 0)
-    {
-        cout << "\nStudent not found!\n";
-    }
-    else
-    {
-        cout << "\n========== STUDENT DETAILS ==========\n";
-        cout << "ID         : " << student.getId() << endl;
-        cout << "Name       : " << student.getName() << endl;
-        cout << "Roll Number: " << student.getRollNumber() << endl;
-        cout << "Department : " << student.getDepartment() << endl;
-    }
+            break;
+        }
+        case 14:
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    break;
-}
-case 14:
-{
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            string title;
 
-    string title;
+            cout << "Enter Book Title: ";
+            getline(cin, title);
 
-    cout << "Enter Book Title: ";
-    getline(cin, title);
+            Book book = bookService.getBookByTitle(title);
 
-    Book book = bookService.getBookByTitle(title);
+            if (book.getId() == 0)
+            {
+                cout << "\nBook not found!\n";
+            }
+            else
+            {
+                cout << "\n========== BOOK DETAILS ==========\n";
+                cout << "ID        : " << book.getId() << endl;
+                cout << "Title     : " << book.getTitle() << endl;
+                cout << "Author    : " << book.getAuthor() << endl;
+                cout << "ISBN      : " << book.getISBN() << endl;
+                cout << "Available : "
+                     << (book.isAvailable() ? "Yes" : "No") << endl;
+            }
 
-    if (book.getId() == 0)
-    {
-        cout << "\nBook not found!\n";
-    }
-    else
-    {
-        cout << "\n========== BOOK DETAILS ==========\n";
-        cout << "ID        : " << book.getId() << endl;
-        cout << "Title     : " << book.getTitle() << endl;
-        cout << "Author    : " << book.getAuthor() << endl;
-        cout << "ISBN      : " << book.getISBN() << endl;
-        cout << "Available : "
-             << (book.isAvailable() ? "Yes" : "No") << endl;
-    }
-
-    break;
-}
+            break;
+        }
 
         case 0:
             cout << "\nExiting...\n";
