@@ -1,4 +1,5 @@
 #include "services/BookService.h"
+#include<iostream>
 
 BookService::BookService(Database& database)
     : database(database)
@@ -7,6 +8,14 @@ BookService::BookService(Database& database)
 
 bool BookService::addBook(const Book& book)
 {
+    Book existing = getBookByISBN(book.getISBN());
+
+    if (existing.getId() != 0)   // Change 0 to -1 if your default Book id is -1
+    {
+        std::cout << "Book with this ISBN already exists.\n";
+        return false;
+    }
+
     std::string sql =
         "INSERT INTO books (title, author, isbn, available) VALUES ('" +
         book.getTitle() + "', '" +
@@ -95,4 +104,34 @@ bool BookService::deleteBook(int id)
         "DELETE FROM books WHERE id = " + std::to_string(id) + ";";
 
     return database.execute(sql);
+}
+Book BookService::getBookByTitle(const std::string& title)
+{
+    sqlite3_stmt* stmt;
+
+    std::string sql = "SELECT * FROM books WHERE title = ?;";
+
+    if (sqlite3_prepare_v2(database.getDatabase(), sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        return Book();
+    }
+
+    sqlite3_bind_text(stmt, 1, title.c_str(), -1, SQLITE_STATIC);
+
+    Book book;
+
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        book = Book(
+            sqlite3_column_int(stmt, 0),
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)),
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)),
+            reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)),
+            sqlite3_column_int(stmt, 4)
+        );
+    }
+
+    sqlite3_finalize(stmt);
+
+    return book;
 }

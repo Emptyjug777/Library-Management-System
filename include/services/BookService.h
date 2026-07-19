@@ -20,6 +20,7 @@ public:
     Book getBookByISBN(const std::string& isbn);
     bool updateBook(const Book& book);
     bool deleteBook(int id);
+    Book getBookByTitle(const std::string& title);
 };
 
 #endif

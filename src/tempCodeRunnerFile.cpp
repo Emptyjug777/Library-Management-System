@@ -1,0 +1,1 @@
+g++ src/main.cpp src/database/Database.cpp src/models/Book.cpp src/models/Student.cpp src/models/Transaction.cpp src/services/BookService.cpp src/services/StudentService.cpp src/services/TransactionService.cpp sqlite3.o -Iinclude -Iexternal/sqlite -o LMS.exe
