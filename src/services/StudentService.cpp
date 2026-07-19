@@ -1,4 +1,5 @@
 #include "services/StudentService.h"
+#include<iostream>
 
 StudentService::StudentService(Database& db)
     : database(db)
@@ -7,6 +8,13 @@ StudentService::StudentService(Database& db)
 
 bool StudentService::addStudent(const Student& student)
 {
+    Student existing = getStudentByRollNumber(student.getRollNumber());
+
+if (existing.getId() != 0)
+{
+    std::cout << "Student with this roll number already exists.\n";
+    return false;
+}
     std::string sql =
         "INSERT INTO students (name, roll_number, department) VALUES ('" +
         student.getName() + "', '" +
